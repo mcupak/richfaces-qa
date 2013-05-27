@@ -38,7 +38,7 @@ public class TestMessage extends AbstractTestMessage {
         abstractTestCorrectValues();
     }
 
-    @Test
+    @Test(groups = { "4.Future" })
     public void testLessThanMinimum() {
         abstractTestLessThanMinimum();
     }
@@ -48,7 +48,7 @@ public class TestMessage extends AbstractTestMessage {
         abstractTestEmptyInputs();
     }
 
-    @Test
+    @Test(groups = { "4.Future" })
     public void testGreaterThanMaximum() {
         abstractTestGreaterThanMaximum();
     }

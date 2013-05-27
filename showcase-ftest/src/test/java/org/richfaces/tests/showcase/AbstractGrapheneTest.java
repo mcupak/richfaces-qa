@@ -22,6 +22,7 @@
 package org.richfaces.tests.showcase;
 
 import static org.jboss.arquillian.ajocado.Graphene.elementVisible;
+import static org.jboss.arquillian.ajocado.Graphene.guardXhr;
 import static org.jboss.arquillian.ajocado.Graphene.waitGui;
 import static org.jboss.arquillian.ajocado.locator.LocatorFactory.jq;
 import static org.testng.Assert.assertFalse;
@@ -30,11 +31,15 @@ import static org.testng.Assert.assertTrue;
 import java.util.Iterator;
 
 import org.jboss.arquillian.ajocado.ajaxaware.AjaxAwareInterceptor;
-import org.jboss.arquillian.ajocado.framework.GrapheneSelenium;
+import org.jboss.arquillian.ajocado.format.SimplifiedFormat;
+import org.jboss.arquillian.ajocado.framework.AjaxSelenium;
 import org.jboss.arquillian.ajocado.geometry.Point;
 import org.jboss.arquillian.ajocado.locator.JQueryLocator;
+import org.jboss.arquillian.ajocado.locator.element.ElementLocator;
 import org.jboss.arquillian.ajocado.utils.URLUtils;
+import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
+import org.openqa.selenium.internal.seleniumemulation.WaitForPageToLoad;
 import org.testng.annotations.BeforeMethod;
 
 /**
@@ -44,18 +49,24 @@ import org.testng.annotations.BeforeMethod;
 public abstract class AbstractGrapheneTest extends AbstractShowcaseTest {
 
     @Drone
-    protected GrapheneSelenium selenium;
+    protected AjaxSelenium selenium;
 
     @BeforeMethod(groups = { "arquillian" })
     public void loadPage() {
 
         selenium.getCommandInterceptionProxy().registerInterceptor(new AjaxAwareInterceptor());
 
-        String addition = getAdditionToContextRoot();
-
-        this.contextRoot = getContextRoot();
-
-        selenium.open(URLUtils.buildUrl(contextRoot, addition));
+//        String addition = getAdditionToContextRoot();
+//
+//        this.contextRoot = getContextRoot();
+//
+//        selenium.open(URLUtils.buildUrl(contextRoot, addition));
+        selenium.open(getPortalRoot());
+        selenium.waitForPageToLoad();
+        selenium.click(jq(SimplifiedFormat.format("div[class~='left-menu'] a:contains('{0}')",getDemo())));
+        selenium.waitForPageToLoad();
+        // currently bug, use to switch tabs when fixed
+//        selenium.click(jq(SimplifiedFormat.format("div[class~='rf-tab-hdr-tabline-vis']  td:contains('{0}'):visible",getSample())));
     }
 
     /* ***********************************************************************************************************************
@@ -180,7 +191,7 @@ public abstract class AbstractGrapheneTest extends AbstractShowcaseTest {
     protected void checkContextMenuRenderedAtCorrectPosition(JQueryLocator target, Point offset, boolean invokedByRightClick,
         JQueryLocator contextMenu, final int TOLERANCE) {
         if (invokedByRightClick) {
-            tryToInvokeContextMenu(target, offset, contextMenu);
+            selenium.contextMenuAt(target, offset);
         } else {
             selenium.clickAt(target, offset);
         }
@@ -201,7 +212,7 @@ public abstract class AbstractGrapheneTest extends AbstractShowcaseTest {
     }
 
     protected void tryToInvokeContextMenu(JQueryLocator node, Point point, JQueryLocator contextMenu) {
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 5; i++) {
             selenium.clickAt(node, point);
             selenium.contextMenuAt(node, point);
 

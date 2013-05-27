@@ -31,12 +31,10 @@ public class FileUploadPage {
 
     @FindBy(css = "span[id$=uploadedFilesPanel] li")
     List<WebElement> uploadedFilesList;
-    @FindBy(xpath = "//input[@type='file'][@class='rf-fu-inp']")
+    @FindBy(xpath= "//input[@type='file'][@class='rf-fu-inp']")
     WebElement fileInputField;
     @FindBy(css = "span.rf-fu-btn-upl")
     WebElement uploadButton;
-    @FindBy(css = "span.rf-fu-btn-add")
-    WebElement addButton;
     @FindBy(css = "span.rf-fu-btn-clr")
     WebElement clearAllButton;
     @FindBy(css = "div.rf-fu-itm .rf-fu-itm-lbl")
@@ -51,6 +49,4 @@ public class FileUploadPage {
     WebElement statusCheckerOutput;
     @FindBy(css = "span[id$=renderChecker]")
     WebElement renderCheckerOutput;
-    @FindBy(css = "div[id$=customProgressBar]")
-    WebElement customPB;
 }

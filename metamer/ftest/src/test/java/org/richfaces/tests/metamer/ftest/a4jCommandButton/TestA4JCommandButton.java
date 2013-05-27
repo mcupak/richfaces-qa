@@ -1,6 +1,6 @@
-/**
+/*******************************************************************************
  * JBoss, Home of Professional Open Source
- * Copyright 2012, Red Hat, Inc. and individual contributors
+ * Copyright 2010-2012, Red Hat, Inc. and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -18,59 +18,51 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */
+ *******************************************************************************/
 package org.richfaces.tests.metamer.ftest.a4jCommandButton;
 
+import static org.jboss.arquillian.ajocado.Graphene.guardNoRequest;
+import static org.jboss.arquillian.ajocado.Graphene.guardXhr;
+import static org.jboss.arquillian.ajocado.Graphene.retrieveText;
+import static org.jboss.arquillian.ajocado.Graphene.textEquals;
+import static org.jboss.arquillian.ajocado.Graphene.waitGui;
+
 import static org.jboss.arquillian.ajocado.utils.URLUtils.buildUrl;
-import static org.richfaces.tests.metamer.ftest.webdriver.AttributeList.commandButtonAttributes;
+
+import static org.jboss.test.selenium.locator.utils.LocatorEscaping.jq;
+
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.fail;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
 import javax.faces.event.PhaseId;
-import org.jboss.test.selenium.support.ui.ElementNotPresent;
-import org.jboss.test.selenium.support.ui.TextEquals;
-import org.jboss.test.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Action;
-import org.openqa.selenium.support.FindBy;
-import org.richfaces.tests.metamer.ftest.AbstractWebDriverTest;
-import org.richfaces.tests.metamer.ftest.annotations.Inject;
+
+import org.jboss.arquillian.ajocado.dom.Attribute;
+import org.jboss.arquillian.ajocado.dom.Event;
+import org.jboss.arquillian.ajocado.javascript.JavaScript;
+import org.jboss.arquillian.ajocado.locator.JQueryLocator;
+import org.jboss.arquillian.ajocado.locator.attribute.AttributeLocator;
+import org.richfaces.tests.metamer.ftest.AbstractGrapheneTest;
 import org.richfaces.tests.metamer.ftest.annotations.IssueTracking;
 import org.richfaces.tests.metamer.ftest.annotations.RegressionTest;
-import org.richfaces.tests.metamer.ftest.annotations.Use;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import static org.richfaces.tests.metamer.ftest.attributes.AttributeList.commandButtonAttributes;
 
 /**
- * @author <a href="mailto:jstefek@redhat.com">Jiri Stefek</a>
+ * Test case for page /faces/components/a4jCommandButton/simple.xhtml
+ *
+ * @author <a href="mailto:ppitonak@redhat.com">Pavol Pitonak</a>
+ * @version $Revision: 22733 $
  */
-public class TestA4JCommandButton extends AbstractWebDriverTest {
+public class TestA4JCommandButton extends AbstractGrapheneTest {
 
-    private CommandButtonPage page = new CommandButtonPage();
-    private static final String STRING_RF1 = "RichFaces 4";
-    private static final String STRING_RF1_X2 = "RichFaces 4RichFaces 4";
-    private static final String STRING_RF2 = "RichFa";//first 6 characters
-    private static final String STRING_RF3 = "RICHFACES 4";
-    private static final String STRING_RF_UNICODE = "RichFaces 4š";
-    private static final String STRING_RF_UNICODE_UPPERCASE = "RICHFACES 4Š";
-    private static final String STRING_UNICODE1 = "ľščťžýáíéňô";
-    private static final String STRING_UNICODE2 = "ľščťžý";
-    private static final String STRING_UNICODE3 = "ĽŠČŤŽÝÁÍÉŇÔ";
-    private static final String STRING_ACTIONLISTENER_MSG = "* action listener invoked";
-    private static final String STRING_ACTION_MSG = "* action invoked";
-    private static final String STRING_EXECUTE_CHECKER_MSG = "* executeChecker";
-    @Inject
-    @Use(empty = false)
-    private String type;
-
-    @BeforeMethod
-    public void loadPage() {
-        injectWebElementsToPage(page);
-    }
+    private JQueryLocator input = pjq("input[id$=input]");
+    private JQueryLocator button = pjq("input[id$=a4jCommandButton]");
+    private JQueryLocator output1 = pjq("span[id$=output1]");
+    private JQueryLocator output2 = pjq("span[id$=output2]");
+    private JQueryLocator output3 = pjq("span[id$=output3]");
 
     @Override
     public URL getTestUrl() {
@@ -79,345 +71,340 @@ public class TestA4JCommandButton extends AbstractWebDriverTest {
 
     @Test(groups = "client-side-perf")
     public void testSimpleClick() {
-        page.typeToInputAndSubmitAndWaitUntilOutput1Changes(STRING_RF1);
+        guardNoRequest(selenium).typeKeys(input, "RichFaces 4");
+        guardXhr(selenium).click(button);
 
-        page.verifyOutput1Text();
-        page.verifyOutput2Text();
-        page.verifyOutput3Text();
+        waitGui.until(textEquals.locator(output1).text("RichFaces 4"));
+
+        String output = selenium.getText(output1);
+        assertEquals(output, "RichFaces 4", "output1 when 'RichFaces 4' in input");
+
+        output = selenium.getText(output2);
+        assertEquals(output, "RichFa", "output2 when 'RichFaces 4' in input");
+
+        output = selenium.getText(output3);
+        assertEquals(output, "RICHFACES 4", "output3 when 'RichFaces 4' in input");
     }
 
     @Test
     @IssueTracking("https://issues.jboss.org/browse/RF-9665")
     public void testSimpleClickUnicode() {
-        page.typeToInputAndSubmitAndWaitUntilOutput1Changes(STRING_UNICODE1);
+        guardNoRequest(selenium).typeKeys(input, "ľščťžýáíéňô");
+        guardXhr(selenium).click(button);
 
-        page.verifyOutput1Text(STRING_UNICODE1);
-        page.verifyOutput2Text(STRING_UNICODE2);
-        page.verifyOutput3Text(STRING_UNICODE3);
+        waitGui.until(textEquals.locator(output1).text("ľščťžýáíéňô"));
+
+        String output = selenium.getText(output1);
+        assertEquals(output, "ľščťžýáíéňô", "output1 when 'ľščťžýáíéňô' in input");
+
+        output = selenium.getText(output2);
+        assertEquals(output, "ľščťžý", "output2 when 'ľščťžýáíéňô' in input");
+
+        output = selenium.getText(output3);
+        assertEquals(output, "ĽŠČŤŽÝÁÍÉŇÔ", "output3 when 'ľščťžýáíéňô' in input");
     }
 
     @Test
     public void testAction() {
         commandButtonAttributes.set(CommandButtonAttributes.action, "doubleStringAction");
-        page.typeToInputAndSubmitAndWaitUntilOutput1Changes(STRING_RF1);
-        page.verifyOutput2Text(STRING_RF1_X2);
+        selenium.typeKeys(input, "RichFaces 4");
+        guardXhr(selenium).click(button);
+        waitGui.until(textEquals.locator(output1).text("RichFaces 4"));
+        String output = selenium.getText(output2);
+        assertEquals(output, "RichFaces 4RichFaces 4", "output2 when 'RichFaces 4' in input and doubleStringAction selected");
 
         commandButtonAttributes.set(CommandButtonAttributes.action, "first6CharsAction");
-        page.typeToInputAndSubmitAndWaitUntilOutput1Changes(STRING_RF1 + "ě");
-        page.verifyOutput2Text(STRING_RF2);
+        selenium.typeKeys(input, "RichFaces 4ň");
+        guardXhr(selenium).click(button);
+        waitGui.until(textEquals.locator(output1).text("RichFaces 4ň"));
+        output = selenium.getText(output2);
+        assertEquals(output, "RichFa", "output2 when 'RichFaces 4ň' in input and first6CharsAction selected");
 
         commandButtonAttributes.set(CommandButtonAttributes.action, "toUpperCaseAction");
-        page.typeToInputAndSubmitAndWaitUntilOutput1Changes(STRING_RF_UNICODE);
-        page.verifyOutput2Text(STRING_RF_UNICODE_UPPERCASE);
+        selenium.typeKeys(input, "RichFaces 4ě");
+        guardXhr(selenium).click(button);
+        waitGui.until(textEquals.locator(output1).text("RichFaces 4ě"));
+        output = selenium.getText(output2);
+        assertEquals(output, "RICHFACES 4Ě", "output2 when 'RichFaces 4ě' in input and toUpperCaseAction selected");
     }
 
     @Test
     public void testActionListener() {
         commandButtonAttributes.set(CommandButtonAttributes.actionListener, "doubleStringActionListener");
-        page.typeToInputAndSubmitAndWaitUntilOutput1Changes(STRING_RF1);
-        page.verifyOutput3Text(STRING_RF1_X2);
+        selenium.typeKeys(input, "RichFaces 4");
+        guardXhr(selenium).click(button);
+        waitGui.until(textEquals.locator(output1).text("RichFaces 4"));
+        String output = selenium.getText(output3);
+        assertEquals(output, "RichFaces 4RichFaces 4",
+            "output2 when 'RichFaces 4' in input and doubleStringActionListener selected");
 
         commandButtonAttributes.set(CommandButtonAttributes.actionListener, "first6CharsActionListener");
-        page.typeToInputAndSubmitAndWaitUntilOutput1Changes(STRING_RF1 + "ě");
-        page.verifyOutput3Text(STRING_RF2);
+        selenium.typeKeys(input, "RichFaces 4ň");
+        guardXhr(selenium).click(button);
+        waitGui.until(textEquals.locator(output1).text("RichFaces 4ň"));
+        output = selenium.getText(output3);
+        assertEquals(output, "RichFa", "output2 when 'RichFaces 4ň' in input and first6CharsActionListener selected");
 
         commandButtonAttributes.set(CommandButtonAttributes.actionListener, "toUpperCaseActionListener");
-        page.typeToInputAndSubmitAndWaitUntilOutput1Changes(STRING_RF_UNICODE);
-        page.verifyOutput3Text(STRING_RF_UNICODE_UPPERCASE);
+        selenium.typeKeys(input, "RichFaces 4ě");
+        guardXhr(selenium).click(button);
+        waitGui.until(textEquals.locator(output1).text("RichFaces 4ě"));
+        output = selenium.getText(output3);
+        assertEquals(output, "RICHFACES 4Ě", "output2 when 'RichFaces 4ě' in input and toUpperCaseActionListener selected");
     }
 
     @Test
     public void testBypassUpdates() {
         commandButtonAttributes.set(CommandButtonAttributes.bypassUpdates, true);
-        page.submit();
-        page.verifyOutput1Text("");
-        page.verifyOutput2Text("");
-        page.verifyOutput3Text("");
-        page.assertPhasesDontContainSomeOf(PhaseId.UPDATE_MODEL_VALUES, PhaseId.INVOKE_APPLICATION);
-        page.assertPhasesContainAllOf(STRING_ACTIONLISTENER_MSG, STRING_ACTION_MSG);
+
+        String reqTime = selenium.getText(time);
+        guardXhr(selenium).click(button);
+        waitGui.failWith("Page was not updated").waitForChange(reqTime, retrieveText.locator(time));
+
+        assertEquals(selenium.getText(output1), "", "Output 1 should not change");
+        assertEquals(selenium.getText(output2), "", "Output 2 should not change");
+        assertEquals(selenium.getText(output3), "", "Output 3 should not change");
+        phaseInfo.assertPhases(PhaseId.RESTORE_VIEW, PhaseId.APPLY_REQUEST_VALUES, PhaseId.PROCESS_VALIDATIONS,
+            PhaseId.RENDER_RESPONSE);
+
+        String listenerOutput = selenium.getText(jq("div#phasesPanel li:eq(3)"));
+        assertEquals(listenerOutput, "* action listener invoked", "Action listener's output");
+        listenerOutput = selenium.getText(jq("div#phasesPanel li:eq(4)"));
+        assertEquals(listenerOutput, "* action invoked", "Action's output");
     }
 
     @Test
     public void testData() {
-        commandButtonAttributes.set(CommandButtonAttributes.data, STRING_RF1);
+        commandButtonAttributes.set(CommandButtonAttributes.data, "RichFaces 4");
         commandButtonAttributes.set(CommandButtonAttributes.oncomplete, "data = event.data");
-        //Does not matter what we type here
-        page.typeToInputAndSubmitAndWaitUntilOutput1Changes(STRING_RF1);
-        String data = expectedReturnJS("return window.data", STRING_RF1);
-        assertEquals(data, STRING_RF1);
+
+        String reqTime = selenium.getText(time);
+
+        selenium.type(input, "some input text");
+        guardXhr(selenium).click(button);
+        waitGui.failWith("Page was not updated").waitForChange(reqTime, retrieveText.locator(time));
+
+        String data = selenium.getEval(new JavaScript("window.data"));
+        assertEquals(data, "RichFaces 4", "Data sent with ajax request");
     }
 
     @Test
     public void testDisabled() {
+        AttributeLocator<JQueryLocator> disabledAttribute = button.getAttribute(new Attribute("disabled"));
         commandButtonAttributes.set(CommandButtonAttributes.disabled, true);
-        assertTrue(page.button.getAttribute("disabled").equalsIgnoreCase("true"));
+        String isDisabled = selenium.getAttribute(disabledAttribute);
+        assertEquals(isDisabled.toLowerCase(), "true", "The value of attribute disabled");
     }
 
     @Test
     public void testExecute() {
         commandButtonAttributes.set(CommandButtonAttributes.execute, "input executeChecker");
-        page.typeToInputAndSubmitAndWaitUntilOutput1Changes(STRING_RF1);
-        page.assertPhasesContainAllOf(STRING_EXECUTE_CHECKER_MSG);
+
+        selenium.type(input, "RichFaces 4");
+        guardXhr(selenium).click(button);
+        waitGui.failWith("Page was not updated").waitForChangeAndReturn("", retrieveText.locator(output1));
+
+        JQueryLocator logItems = jq("ul.phases-list li:eq({0})");
+        for (int i = 0; i < 6; i++) {
+            if ("* executeChecker".equals(selenium.getText(logItems.format(i)))) {
+                return;
+            }
+        }
+
+        fail("Attribute execute does not work");
     }
 
     @Test
     public void testImmediate() {
         commandButtonAttributes.set(CommandButtonAttributes.immediate, true);
-        page.submit();
-        page.verifyOutput1Text("");
-        page.verifyOutput2Text("");
-        page.verifyOutput3Text("");
-        page.assertPhasesDontContainSomeOf(PhaseId.PROCESS_VALIDATIONS, PhaseId.UPDATE_MODEL_VALUES, PhaseId.INVOKE_APPLICATION);
-        page.assertPhasesContainAllOf(STRING_ACTIONLISTENER_MSG, STRING_ACTION_MSG);
+
+        String reqTime = selenium.getText(time);
+        guardXhr(selenium).click(button);
+        waitGui.failWith("Page was not updated").waitForChange(reqTime, retrieveText.locator(time));
+
+        assertEquals(selenium.getText(output1), "", "Output 1 should not change");
+        assertEquals(selenium.getText(output2), "", "Output 2 should not change");
+        assertEquals(selenium.getText(output3), "", "Output 3 should not change");
+        phaseInfo.assertPhases(PhaseId.RESTORE_VIEW, PhaseId.APPLY_REQUEST_VALUES, PhaseId.RENDER_RESPONSE);
+
+        String listenerOutput = selenium.getText(jq("div#phasesPanel li:eq(2)"));
+        assertEquals(listenerOutput, "* action listener invoked", "Action listener's output");
+        listenerOutput = selenium.getText(jq("div#phasesPanel li:eq(3)"));
+        assertEquals(listenerOutput, "* action invoked", "Action's output");
     }
 
     @Test
     public void testLimitRender() {
         commandButtonAttributes.set(CommandButtonAttributes.limitRender, true);
-        String timeValue = page.getRequestTime();
-        page.typeToInputAndSubmitAndWaitUntilOutput1Changes(STRING_RF1);
-        assertEquals(page.getRequestTime(), timeValue, "Ajax-rendered a4j:outputPanel shouldn't change");
+
+        String timeValue = selenium.getText(time);
+
+        selenium.type(input, "RichFaces 4");
+        guardXhr(selenium).click(button);
+        waitGui.failWith("Page was not updated").waitForChange("", retrieveText.locator(output1));
+
+        assertEquals(selenium.getText(time), timeValue, "Ajax-rendered a4j:outputPanel shouldn't change");
     }
 
     @Test
-    public void testOnBegin() {
-        page.testEvent(CommandButtonAttributes.onbegin);
-    }
+    public void testEvents() {
+        commandButtonAttributes.set(CommandButtonAttributes.onbegin, "metamerEvents += \"begin \"");
+        commandButtonAttributes.set(CommandButtonAttributes.onbeforedomupdate, "metamerEvents += \"beforedomupdate \"");
+        commandButtonAttributes.set(CommandButtonAttributes.oncomplete, "metamerEvents += \"complete \"");
 
-    @Test
-    public void testOnBeforeDOMUpdate() {
-        page.testEvent(CommandButtonAttributes.onbeforedomupdate);
-    }
+        selenium.getEval(new JavaScript("window.metamerEvents = \"\";"));
 
-    @Test
-    public void testOnComplete() {
-        page.testEvent(CommandButtonAttributes.oncomplete);
+        selenium.type(input, "RichFaces 4");
+        guardXhr(selenium).click(button);
+        waitGui.failWith("Page was not updated").waitForChange("", retrieveText.locator(output1));
+
+        String[] events = selenium.getEval(new JavaScript("window.metamerEvents")).split(" ");
+
+        assertEquals(events.length, 3, "3 events should be fired.");
+        assertEquals(events[0], "begin", "Attribute onbegin doesn't work");
+        assertEquals(events[1], "beforedomupdate", "Attribute onbeforedomupdate doesn't work");
+        assertEquals(events[2], "complete", "Attribute oncomplete doesn't work");
     }
 
     @Test
     public void testOnclick() {
-        page.testFireJSEvent(CommandButtonAttributes.onclick);
+        testFireEvent(Event.CLICK, button);
     }
 
     @Test
     public void testOndblclick() {
-        page.testFireJSEvent(CommandButtonAttributes.ondblclick);
+        testFireEvent(Event.DBLCLICK, button);
     }
 
     @Test
     public void testOnkeydown() {
-        page.testFireJSEvent(CommandButtonAttributes.onkeydown);
+        testFireEvent(Event.KEYDOWN, button);
     }
 
     @Test
     public void testOnkeypress() {
-        page.testFireJSEvent(CommandButtonAttributes.onkeypress);
+        testFireEvent(Event.KEYPRESS, button);
     }
 
     @Test
     public void testOneyup() {
-        page.testFireJSEvent(CommandButtonAttributes.onkeyup);
+        testFireEvent(Event.KEYUP, button);
     }
 
     @Test
     public void testOnmousedown() {
-        page.testFireJSEvent(CommandButtonAttributes.onmousedown);
+        testFireEvent(Event.MOUSEDOWN, button);
     }
 
     @Test
     public void testOnmousemove() {
-        page.testFireJSEvent(CommandButtonAttributes.onmousemove);
+        testFireEvent(Event.MOUSEMOVE, button);
     }
 
     @Test
     public void testOnmouseout() {
-        page.testFireJSEvent(CommandButtonAttributes.onmouseout);
+        testFireEvent(Event.MOUSEOUT, button);
     }
 
     @Test
     public void testOnmouseover() {
-        page.testFireJSEvent(CommandButtonAttributes.onmouseover);
+        testFireEvent(Event.MOUSEOVER, button);
     }
 
     @Test
     public void testOnmouseup() {
-        page.testFireJSEvent(CommandButtonAttributes.onmouseup);
+        testFireEvent(Event.MOUSEUP, button);
     }
 
     @Test
     @IssueTracking("https://issues.jboss.org/browse/RF-10555")
     public void testRender() {
-        commandButtonAttributes.set(CommandButtonAttributes.action, "doubleStringAction");
-        commandButtonAttributes.set(CommandButtonAttributes.actionListener, "doubleStringActionListener");
+        JQueryLocator renderInput = pjq("input[name$=renderInput]");
 
-        commandButtonAttributes.set(CommandButtonAttributes.render, "output1");
-        page.typeToInputAndSubmitAndWaitUntilOutput1Changes(STRING_RF1);
-        page.verifyOutput1Text(STRING_RF1);
-        page.verifyOutput2Text("");
-        page.verifyOutput3Text("");
+        selenium.type(renderInput, "output1");
+        selenium.waitForPageToLoad();
 
-        page.typeToInputAndSubmitAndWaitUntilOutput1Changes("");
+        selenium.typeKeys(input, "aaa");
+        guardXhr(selenium).click(button);
 
-        commandButtonAttributes.set(CommandButtonAttributes.render, "output2 output3");
-        page.typeToInputAndSubmitAndWaitUntilOutput2ChangesToText(STRING_RF1, STRING_RF1_X2);
-        page.verifyOutput1Text("");
-        page.verifyOutput2Text(STRING_RF1_X2);
-        page.verifyOutput3Text(STRING_RF1_X2);
+        waitGui.until(textEquals.locator(output1).text("aaa"));
+
+        String output = selenium.getText(output1);
+        assertEquals(output, "aaa", "output1 when 'aaa' in input and 'output1' set to be rerendered");
+
+        output = selenium.getText(output2);
+        assertEquals(output, "", "output2 when 'aaa' in input and 'output1' set to be rerendered");
+
+        output = selenium.getText(output3);
+        assertEquals(output, "", "output3 when 'aaa' in input and 'output1' set to be rerendered");
+
+        selenium.type(renderInput, "output2 output3");
+        selenium.waitForPageToLoad();
+
+        selenium.typeKeys(input, "bbb");
+        guardXhr(selenium).click(button);
+
+        waitGui.until(textEquals.locator(output2).text("bbb"));
+
+        output = selenium.getText(output1);
+        assertEquals(output, "aaa", "output1 when 'bbb' in input and 'output2 output3' set to be rerendered");
+
+        output = selenium.getText(output2);
+        assertEquals(output, "bbb", "output2 when 'bbb' in input and 'output2 output3' set to be rerendered");
+
+        output = selenium.getText(output3);
+        assertEquals(output, "BBB", "output3 when 'bbb' in input and 'output2 output3' set to be rerendered");
+
     }
 
     @Test
     public void testRendered() {
         commandButtonAttributes.set(CommandButtonAttributes.rendered, false);
-        page.assertButtonNotPresent();
+        assertFalse(selenium.isElementPresent(button), "Button should not be displayed");
     }
 
     @Test
     public void testStyle() {
-        testStyle(page.button);
+        testStyle(button);
     }
 
     @Test
     @IssueTracking("https://issues.jboss.org/browse/RF-9307")
     public void testStyleClass() {
-        testStyleClass(page.button);
+        testStyleClass(button);
     }
 
     @Test
     public void testTitle() {
-        testTitle(page.button);
-    }
-
-    @Test
-    @Use(field = "type", strings = { "image", "reset", "submit", "button" })
-    public void testType() {
-        page.testType(type);
+        testTitle(button);
     }
 
     @Test
     @RegressionTest("https://issues.jboss.org/browse/RF-10115")
-    public void testTypeNull() {
-        page.testTypeNull();
+    public void testType() {
+        AttributeLocator<?> attr = button.getAttribute(Attribute.TYPE);
+
+        commandButtonAttributes.set(CommandButtonAttributes.type, "image");
+        assertEquals(selenium.getAttribute(attr), "image", "Button's type");
+
+        commandButtonAttributes.set(CommandButtonAttributes.type, "reset");
+        assertEquals(selenium.getAttribute(attr), "reset", "Button's type");
+
+        commandButtonAttributes.set(CommandButtonAttributes.type, "submit");
+        assertEquals(selenium.getAttribute(attr), "submit", "Button's type");
+
+        commandButtonAttributes.set(CommandButtonAttributes.type, "button");
+        assertEquals(selenium.getAttribute(attr), "button", "Button's type");
+
+        commandButtonAttributes.set(CommandButtonAttributes.type, "null");
+        assertEquals(selenium.getAttribute(attr), "submit", "Button's type");
     }
 
     @Test
     public void testValue() {
-        commandButtonAttributes.set(CommandButtonAttributes.value, STRING_RF1);
-        page.assertButtonValue(STRING_RF1);
-    }
+        commandButtonAttributes.set(CommandButtonAttributes.value, "new label");
 
-    private class CommandButtonPage {
-
-        @FindBy(css = "input[id$=input]")
-        WebElement input;
-        @FindBy(css = "input[id$=a4jCommandButton]")
-        WebElement button;
-        @FindBy(css = "span[id$=output1]")
-        WebElement output1;
-        @FindBy(css = "span[id$=output2]")
-        WebElement output2;
-        @FindBy(css = "span[id$=output3]")
-        WebElement output3;
-        @FindBy(css = "span[id$=requestTime]")
-        WebElement requestTime;
-        @FindBy(css = "div#phasesPanel li")
-        List<WebElement> phases;
-
-        public void typeToInputAndSubmitAndWaitUntilOutput1Changes(String s) {
-            typeToInputAndSubmit(s);
-            new WebDriverWait(driver).until(TextEquals.getInstance().element(output1).text(s));
-        }
-
-        public void typeToInputAndSubmitAndWaitUntilOutput2ChangesToText(String testValue, String expectedText) {
-            typeToInputAndSubmit(testValue);
-            new WebDriverWait(driver, 5).until(TextEquals.getInstance().element(output2).text(expectedText));
-        }
-
-        public void typeToInputAndSubmit(String s) {
-            input.clear();
-            input.sendKeys(s);
-            submit();
-        }
-
-        public void submit() {
-            waitRequest(button, WaitRequestType.XHR).click();
-        }
-
-        public String getRequestTime() {
-            return requestTime.getText();
-        }
-
-        public void verifyOutput1Text() {
-            verifyOutput1Text(STRING_RF1);
-        }
-
-        public void verifyOutput2Text() {
-            verifyOutput2Text(STRING_RF2);
-        }
-
-        public void verifyOutput3Text() {
-            verifyOutput3Text(STRING_RF3);
-        }
-
-        public void verifyOutput1Text(String s) {
-            verifyOutputText(output1, s);
-        }
-
-        public void verifyOutput2Text(String s) {
-            verifyOutputText(output2, s);
-        }
-
-        public void verifyOutput3Text(String s) {
-            verifyOutputText(output3, s);
-        }
-
-        private void verifyOutputText(WebElement elem, String text) {
-            assertEquals(elem.getText(), text);
-        }
-
-        public List<String> getPhases() {
-            List<String> result = new ArrayList<String>();
-            for (WebElement webElement : phases) {
-                result.add(webElement.getText());
-            }
-            return result;
-        }
-
-        public void assertPhasesDontContainSomeOf(PhaseId... phase) {
-            assertTrue(new PhasesWrapper(getPhases()).notContainsSomeOf(phase), "Phases contain some of " + Arrays.asList(phase));
-        }
-
-        public void assertPhasesContainAllOf(String... s) {
-            assertTrue(new PhasesWrapper(getPhases()).containsAllOf(s), "Phases don't contain some of " + Arrays.asList(s));
-        }
-
-        public void assertButtonNotPresent() {
-            assertTrue(ElementNotPresent.getInstance().element(button).apply(driver), "Button should not be on page.");
-        }
-
-        public void assertButtonValue(String value) {
-            assertEquals(button.getAttribute("value"), value, "Button's value did not change");
-        }
-
-        public void testType(String value) {
-            testHTMLAttribute(button, commandButtonAttributes, CommandButtonAttributes.type, value);
-        }
-
-        public void testTypeNull() {
-            testHTMLAttribute(button, commandButtonAttributes, CommandButtonAttributes.type, "null", "submit");
-        }
-
-        public void testFireJSEvent(CommandButtonAttributes event) {
-            testFireEventWithJS(button, commandButtonAttributes, event);
-        }
-
-        public void testEvent(CommandButtonAttributes testedAttribute) {
-            testFireEvent(commandButtonAttributes, testedAttribute, new Action() {
-
-                @Override
-                public void perform() {
-                    button.click();
-                }
-            });
-        }
+        AttributeLocator<?> attribute = button.getAttribute(new Attribute("value"));
+        assertEquals(selenium.getAttribute(attribute), "new label", "Value of the button did not change.");
     }
 }

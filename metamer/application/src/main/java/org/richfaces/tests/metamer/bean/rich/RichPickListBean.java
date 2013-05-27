@@ -57,7 +57,7 @@ public class RichPickListBean implements Serializable {
     private static final long serialVersionUID = 2158237918061200181L;
 
     private Attributes attributes;
-    @ManagedProperty("#{model.capitals}")
+    @ManagedProperty(value = "#{model.capitals}")
     private List<Capital> capitals;
     private List<SelectItem> capitalsOptions = null;
     private List<SelectItem> validationOptions = null;

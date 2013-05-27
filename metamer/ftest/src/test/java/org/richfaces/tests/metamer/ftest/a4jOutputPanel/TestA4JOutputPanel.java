@@ -49,7 +49,6 @@ import org.jboss.arquillian.ajocado.locator.JQueryLocator;
 import org.richfaces.tests.metamer.ftest.AbstractGrapheneTest;
 import org.richfaces.tests.metamer.ftest.annotations.Inject;
 import org.richfaces.tests.metamer.ftest.annotations.IssueTracking;
-import org.richfaces.tests.metamer.ftest.annotations.RegressionTest;
 import org.richfaces.tests.metamer.ftest.annotations.Use;
 import org.richfaces.tests.metamer.ftest.annotations.Uses;
 import org.testng.annotations.Test;
@@ -96,7 +95,7 @@ public class TestA4JOutputPanel extends AbstractGrapheneTest {
     }
 
     @Test
-    @RegressionTest("https://issues.jboss.org/browse/RF-11312")
+    @IssueTracking("https://issues.jboss.org/browse/RF-11312")
     public void testClick() {
         selenium.click(increaseCounterButton);
         waitGui.until(textEquals.locator(outputDiv).text("1"));
@@ -153,7 +152,7 @@ public class TestA4JOutputPanel extends AbstractGrapheneTest {
     }
 
     @Test
-    @RegressionTest("https://issues.jboss.org/browse/RF-11312")
+    @IssueTracking("https://issues.jboss.org/browse/RF-11312")
     public void testRendered() {
         outputPanelAttributes.set(OutputPanelAttributes.rendered, false);
         assertFalse(selenium.isElementPresent(outputDiv), "Panel should not be rendered.");

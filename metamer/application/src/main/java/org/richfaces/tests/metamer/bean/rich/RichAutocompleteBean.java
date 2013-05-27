@@ -56,7 +56,7 @@ public class RichAutocompleteBean implements Serializable {
     private static Logger logger;
     private Attributes attributes;
     private Attributes ajaxAttributes;
-    @ManagedProperty("#{model.capitals}")
+    @ManagedProperty(value = "#{model.capitals}")
     private List<Capital> capitals;
 
     // properties for jsr303 validations
@@ -167,7 +167,7 @@ public class RichAutocompleteBean implements Serializable {
         this.capitals = capitals;
     }
 
-    @NotEmpty(message = RichInplaceInputBean.NOT_EMPTY_VALIDATION_MSG)
+    @NotEmpty
     public String getValue1() {
         return value1;
     }
@@ -176,7 +176,7 @@ public class RichAutocompleteBean implements Serializable {
         this.value1 = value1;
     }
 
-    @Pattern(regexp = "[a-z].*", message = RichInplaceInputBean.REGEXP_VALIDATION_MSG)
+    @Pattern(regexp = "[a-z].*")
     public String getValue2() {
         return value2;
     }
@@ -185,7 +185,7 @@ public class RichAutocompleteBean implements Serializable {
         this.value2 = value2;
     }
 
-    @Size(min = 3, max = 6, message = RichInplaceInputBean.STRING_SIZE_VALIDATION_MSG)
+    @Size(min = 3, max = 6)
     public String getValue3() {
         return value3;
     }

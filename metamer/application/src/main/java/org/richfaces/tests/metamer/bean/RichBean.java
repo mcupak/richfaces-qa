@@ -70,7 +70,6 @@ public class RichBean implements Serializable {
     private Map<String, String> richComponents;
     private Map<String, String> otherComponents;
     private String container;
-    private boolean dummyBooleanResp;
 
     public enum Skinning {
 
@@ -393,7 +392,6 @@ public class RichBean implements Serializable {
         }
 
         logToPage("* action invoked [end]");
-        dummyBooleanResp = !dummyBooleanResp;
         return null;
     }
 
@@ -485,13 +483,5 @@ public class RichBean implements Serializable {
 
     public void setExecuteChecker(boolean executeChecker) {
         logToPage("* executeChecker");
-    }
-
-    public boolean getDummyBooleanResp() {
-        return dummyBooleanResp;
-    }
-
-    public void setDummyBooleanResp(boolean dummyBooleanResp) {
-        this.dummyBooleanResp = dummyBooleanResp;
     }
 }

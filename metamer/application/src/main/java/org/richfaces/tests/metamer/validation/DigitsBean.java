@@ -35,13 +35,11 @@ import javax.validation.constraints.Digits;
 @ManagedBean
 public class DigitsBean extends Validable<BigDecimal> {
 
-    public static final String VALIDATION_MSG = "numeric value out of bounds (<3 digits>.<4 digits> expected)";
-
     public DigitsBean() {
         value = new BigDecimal("2.567");
     }
 
-    @Digits(integer = 3, fraction = 4, message = VALIDATION_MSG)
+    @Digits(integer = 3, fraction = 4)
     @Override
     public BigDecimal getValue() {
         return value;

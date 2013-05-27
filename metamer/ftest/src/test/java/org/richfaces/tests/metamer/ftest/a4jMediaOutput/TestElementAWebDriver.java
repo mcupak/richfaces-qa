@@ -55,7 +55,7 @@ public class TestElementAWebDriver extends AbstractWebDriverTest {
 
     @Test
     public void testLang() {
-        testHTMLAttribute(page.link, mediaOutputAttributes, MediaOutputAttributes.lang, "cz");
+        super.testAttributeLang(page.link);
     }
 
     @Test

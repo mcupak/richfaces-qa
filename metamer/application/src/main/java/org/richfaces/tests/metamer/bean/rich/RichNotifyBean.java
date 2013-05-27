@@ -29,6 +29,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import org.richfaces.component.NotifyAttributes;
 import org.richfaces.component.UINotify;
 import org.richfaces.component.UINotifyMessages;
 import org.richfaces.component.UINotifyStack;

@@ -37,7 +37,6 @@ import java.net.URL;
 import org.jboss.arquillian.ajocado.locator.JQueryLocator;
 import org.richfaces.tests.metamer.ftest.AbstractGrapheneTest;
 import org.richfaces.tests.metamer.ftest.annotations.IssueTracking;
-import org.richfaces.tests.metamer.ftest.annotations.RegressionTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -85,8 +84,8 @@ public class TestTooltipTarget extends AbstractGrapheneTest {
         waitGui.until(elementVisible.locator(tooltip3));
     }
 
-    @Test
-    @RegressionTest("https://issues.jboss.org/browse/RF-11370")
+    @Test(groups = { "4.3" })
+    @IssueTracking("https://issues.jboss.org/browse/RF-11370")
     public void testTargetWithRegularDiv() {
         tooltipAttributes.set(target, "regular-div");
         tooltip1.recall();

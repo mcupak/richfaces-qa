@@ -34,9 +34,9 @@ import org.jboss.test.selenium.listener.FailureLoggingTestListener;
 import org.richfaces.tests.metamer.ftest.annotations.IssueTracking;
 import org.testng.ITestResult;
 
+
 /**
  * @author <a href="mailto:lfryc@redhat.com">Lukas Fryc</a>
- * @author <a href="https://community.jboss.org/people/ppitonak">Pavol Pitonak</a>
  * @version $Revision: 22728 $
  */
 public class MetamerFailureLoggingTestListener extends FailureLoggingTestListener {
@@ -52,16 +52,12 @@ public class MetamerFailureLoggingTestListener extends FailureLoggingTestListene
     }
 
     @Override
-    public void onFailure(ITestResult result) {
-        if (AbstractGrapheneTest.class.isAssignableFrom(result.getTestClass().getRealClass())) {
-            onFailureForSelenium1(result);
-        } else {
-            onFailureForSelenium2(result);
-        }
+    protected void onFailure(ITestResult result) {
+        super.onFailure(result);
 
         List<String> issueList = new LinkedList<String>();
-        IssueTracking issueTracking = result.getMethod().getConstructorOrMethod().getMethod()
-            .getAnnotation(IssueTracking.class);
+        //IssueTracking issueTracking = result.getMethod().getConstructorOrMethod().getMethod().getAnnotation(IssueTracking.class);
+        IssueTracking issueTracking = result.getMethod().getConstructorOrMethod().getMethod().getAnnotation(IssueTracking.class);
         if (issueTracking != null) {
             issueList.addAll(asList(issueTracking.value()));
         }

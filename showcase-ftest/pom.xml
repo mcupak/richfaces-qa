@@ -1,3 +1,4 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
@@ -5,7 +6,7 @@
     <parent>
         <groupId>org.richfaces.tests</groupId>
         <artifactId>richfaces-qa-parent</artifactId>
-        <version>4.3.0-SNAPSHOT</version>
+        <version>4.2.2.20120528-Final</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -23,11 +24,10 @@
     <dependencies>
         <!-- RichFaces dependencies -->
         <dependency>
-            <groupId>org.richfaces.examples</groupId>
-            <artifactId>richfaces-showcase</artifactId>
+            <groupId>org.jboss.portletbridge.examples</groupId>
+            <artifactId>richfaces-core-demo</artifactId>
             <type>war</type>
-            <version>${version.richfaces}</version>
-            <classifier>${showcase.classifier}</classifier>
+            <version>3.0.0.Final</version>
         </dependency>
         <!-- Arquillian dependencies -->
         <dependency>
@@ -53,11 +53,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>com.opera</groupId>
-            <artifactId>operadriver</artifactId>
-        </dependency>
-
         <!-- Graphene dependency chain - imports all other dependencies required -->
         <dependency>
             <groupId>org.jboss.arquillian.graphene</groupId>
@@ -95,11 +90,10 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.richfaces.examples</groupId>
-                                    <artifactId>richfaces-showcase</artifactId>
-                                    <version>${version.richfaces}</version>
-                                    <classifier>${showcase.classifier}</classifier>
+                                    <groupId>org.jboss.portletbridge.examples</groupId>
+                                    <artifactId>richfaces-core-demo</artifactId>
                                     <type>war</type>
+                                    <version>3.0.0.Final</version>
                                     <destFileName>showcase.war</destFileName>
                                 </artifactItem>
                             </artifactItems>

@@ -33,13 +33,11 @@ import javax.validation.constraints.NotNull;
 @ManagedBean
 public class NotNullBean extends Validable<String> {
 
-    public static final String VALIDATION_MSG = "may not be null";
-
     public NotNullBean() {
         value = "RichFaces 4";
     }
 
-    @NotNull(message = VALIDATION_MSG)
+    @NotNull
     @Override
     public String getValue() {
         return value;

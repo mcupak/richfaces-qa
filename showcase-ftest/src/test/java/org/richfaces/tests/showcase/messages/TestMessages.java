@@ -26,6 +26,7 @@ import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:jhuska@redhat.com">Juraj Huska</a>
+ * @version $Revision$
  */
 public class TestMessages extends AbstractTestMessage {
 
@@ -38,7 +39,7 @@ public class TestMessages extends AbstractTestMessage {
         abstractTestCorrectValues();
     }
 
-    @Test
+    @Test(groups = { "4.Future" })
     public void testLessThanMinimum() {
         abstractTestLessThanMinimum();
     }
@@ -48,7 +49,7 @@ public class TestMessages extends AbstractTestMessage {
         abstractTestEmptyInputs();
     }
 
-    @Test
+    @Test(groups = { "4.Future" })
     public void testGreaterThanMaximum() {
         abstractTestGreaterThanMaximum();
     }

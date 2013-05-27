@@ -32,7 +32,6 @@ import org.testng.ITestResult;
  * Obtains informations about status of test, obtains method names from test result.
  *
  * @author <a href="mailto:lfryc@redhat.com">Lukas Fryc</a>
- * @author <a href="https://community.jboss.org/people/ppitonak">Pavol Pitonak</a>
  * @version $Revision$
  */
 public final class TestInfo {
@@ -67,16 +66,6 @@ public final class TestInfo {
     }
 
     /**
-     * Get package + class + method name from java.lang.reflect.Method
-     *
-     * @param method
-     * @return the package + class + method name in current context
-     */
-    public static String getPackageClassMethodName(Method method) {
-        return getContainingPackageName(method) + "." + getClassMethodName(method);
-    }
-
-    /**
      * Get class + method name from ITestResult
      *
      * @param result
@@ -88,16 +77,6 @@ public final class TestInfo {
     }
 
     /**
-     * Get class + method name from java.lang.reflect.Method
-     *
-     * @param method
-     * @return the class + method name in current context
-     */
-    public static String getClassMethodName(Method method) {
-        return getClassName(method) + "." + getMethodName(method);
-    }
-
-    /**
      * Get method name from ITestResult
      *
      * @param result
@@ -106,16 +85,6 @@ public final class TestInfo {
      */
     public static String getMethodName(ITestResult result) {
         Method method = result.getMethod().getMethod();
-        return method.getName();
-    }
-
-    /**
-     * Get method name from java.lang.reflect.Method
-     *
-     * @param method
-     * @return the method name in current context
-     */
-    public static String getMethodName(Method method) {
         return method.getName();
     }
 
@@ -132,16 +101,6 @@ public final class TestInfo {
     }
 
     /**
-     * Get class name from java.lang.reflect.Method
-     *
-     * @param method
-     * @return the class name in current context
-     */
-    public static String getClassName(Method method) {
-        return method.getDeclaringClass().getSimpleName();
-    }
-
-    /**
      * Get last containing package name from ITestResult
      *
      * @param result
@@ -152,15 +111,4 @@ public final class TestInfo {
         Package dPackage = result.getMethod().getMethod().getDeclaringClass().getPackage();
         return dPackage.getName().replaceFirst("^.*\\.", "");
     }
-
-    /**
-     * Get last containing package name from java.lang.reflect.Method
-    *
-    * @param method
-    * @return the package name in current context
-    */
-   public static String getContainingPackageName(Method method) {
-       Package dPackage = method.getDeclaringClass().getPackage();
-       return dPackage.getName().replaceFirst("^.*\\.", "");
-   }
 }

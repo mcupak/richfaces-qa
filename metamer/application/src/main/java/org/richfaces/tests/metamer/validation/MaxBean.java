@@ -33,13 +33,11 @@ import javax.validation.constraints.Max;
 @ManagedBean
 public class MaxBean extends Validable<Integer> {
 
-    public static final String VALIDATION_MSG = "must be less than or equal to 10";
-
     public MaxBean() {
         value = 9;
     }
 
-    @Max(value = 10, message = VALIDATION_MSG)
+    @Max(10)
     @Override
     public Integer getValue() {
         return value;

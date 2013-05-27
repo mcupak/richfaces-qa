@@ -32,7 +32,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.jboss.arquillian.ajocado.utils.URLUtils;
-import org.richfaces.tests.metamer.ftest.annotations.IssueTracking;
 import org.testng.annotations.Test;
 
 /**
@@ -52,8 +51,7 @@ public class TestCalendarKVS extends AbstractCalendarTest {
         return URLUtils.buildUrl(contextPath, "faces/components/richCalendar/simple.xhtml");
     }
 
-    @IssueTracking("https://issues.jboss.org/browse/RF-12300")
-    @Test(groups = {"keepVisualStateTesting", "4.Future"})
+    @Test(groups = {"keepVisualStateTesting"})
     public void testRenderAll() {
         reloadTesterInput.testRerenderAll();
     }

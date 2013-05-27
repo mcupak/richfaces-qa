@@ -27,16 +27,16 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
 import org.hibernate.validator.constraints.NotEmpty;
+
 import org.richfaces.component.UISelect;
 import org.richfaces.tests.metamer.Attributes;
+import org.richfaces.tests.metamer.bean.Model;
 import org.richfaces.tests.metamer.bean.RichBean;
 import org.richfaces.tests.metamer.model.Capital;
 import org.slf4j.Logger;
@@ -52,14 +52,11 @@ import org.slf4j.LoggerFactory;
 @ViewScoped
 public class RichSelectBean implements Serializable {
 
-    public static final String REGEXP_VALIDATION_MSG = "must match \"[a-z].*\"";
-    public static final String STRING_SIZE_VALIDATION_MSG = "size must be between 3 and 6";
-    public static final String NOT_EMPTY_VALIDATION_MSG = "may not be empty";
-
     private static final long serialVersionUID = -1L;
     private static Logger logger;
     private Attributes attributes;
-    @ManagedProperty("#{model.capitals}")
+//    temporary fix because of a bug in MyFaces
+//    @ManagedProperty(value = "#{model.capitals}")
     private List<Capital> capitals;
     private List<SelectItem> capitalsOptions = null;
     private List<SelectItem> validationOptions = null;
@@ -78,7 +75,9 @@ public class RichSelectBean implements Serializable {
 
         capitalsOptions = new ArrayList<SelectItem>();
         validationOptions = new ArrayList<SelectItem>();
-        for (Capital capital : capitals) {
+//        temporary fix because of a bug in MyFaces
+//        for (Capital capital : capitals) {
+        for (Capital capital : Model.unmarshallCapitals()) {
             capitalsOptions.add(new SelectItem(capital.getState(), capital.getState()));
             validationOptions.add(new SelectItem(capital.getState(), capital.getState()));
         }
@@ -133,7 +132,7 @@ public class RichSelectBean implements Serializable {
         this.validationOptions = validationOptions;
     }
 
-    @NotEmpty(message = NOT_EMPTY_VALIDATION_MSG)
+    @NotEmpty
     public String getValue1() {
         return value1;
     }
@@ -142,7 +141,7 @@ public class RichSelectBean implements Serializable {
         this.value1 = value1;
     }
 
-    @Pattern(regexp = "[a-z].*", message = REGEXP_VALIDATION_MSG)
+    @Pattern(regexp = "[a-z].*")
     public String getValue2() {
         return value2;
     }
@@ -151,7 +150,7 @@ public class RichSelectBean implements Serializable {
         this.value2 = value2;
     }
 
-    @Size(min = 3, max = 6, message = STRING_SIZE_VALIDATION_MSG)
+    @Size(min = 3, max = 6)
     public String getValue3() {
         return value3;
     }

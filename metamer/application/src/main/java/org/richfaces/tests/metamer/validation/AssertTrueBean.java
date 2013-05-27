@@ -33,13 +33,11 @@ import javax.validation.constraints.AssertTrue;
 @ManagedBean
 public class AssertTrueBean extends Validable<Boolean> {
 
-    public static final String VALIDATION_MSG = "must be true";
-
     public AssertTrueBean() {
         value = true;
     }
 
-    @AssertTrue(message = VALIDATION_MSG)
+    @AssertTrue
     @Override
     public Boolean getValue() {
         return value;
